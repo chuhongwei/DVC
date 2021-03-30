@@ -1,3 +1,7 @@
+python Decoder.py --DecoderModel ./model/L256/frozen_model_D.pb  --refer_frame ./image/im001.png --loadpath  ./image/ --save_path ./image/out1.png
+
+python  Encoder.py --EncoderModel ./model/L256/frozen_model_E.pb  --input_frame ./image/im002.png --refer_frame  ./image/im001.png  	--output ./pkl/
+
 # DVC: An End-to-end Deep Video Compression Framework
 This repo holds the code for the paper:
 

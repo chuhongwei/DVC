@@ -1,4 +1,5 @@
 import pickle
+import scipy.misc
 import tensorflow as tf
 from scipy.misc import imread
 import numpy as np
@@ -22,7 +23,7 @@ def load_graph(frozen_graph_filename):
     return graph
 
 
-def decoder(loadmodel, refer_path, outputfolder):
+def decoder(loadmodel, refer_path, outputfolder,save_path):
     graph = load_graph(loadmodel)
 
     reconframe = graph.get_tensor_by_name('import/build_towers/tower_0/train_net_inference_one_pass/train_net/ReconFrame:0')
@@ -45,7 +46,6 @@ def decoder(loadmodel, refer_path, outputfolder):
         im1 = imread(refer_path)
         im1 = im1 / 255.0
         im1 = np.expand_dims(im1, axis=0)
-
         # reconstructed image
         recon_d = sess.run(
             [reconframe],
@@ -55,8 +55,7 @@ def decoder(loadmodel, refer_path, outputfolder):
                 motion_input: motion_feature,
                 previousImage: im1
             })
-
-        # print(recon_d)
+        scipy.misc.imsave(save_path, recon_d[0][0])
         
         # check 
         # imagedir = './image/'
@@ -70,6 +69,7 @@ if __name__ == "__main__":
     parser.add_argument('--DecoderModel', type=str, dest="loadmodel", default='./model/L2048/frozen_model_E.pb', help="decoder model")
     parser.add_argument('--refer_frame', type=str, dest="refer_path", default='./image/im001.png', help="refer image path")
     parser.add_argument('--loadpath', type=str, dest="outputfolder", default='./testpkl/', help="saved pkl file")
+    parser.add_argument('--save_path', type=str, dest="save_path", default='./image/out001.png', help="saved generate image file")
 
     args = parser.parse_args()
     decoder(**vars(args))
